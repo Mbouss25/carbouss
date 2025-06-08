@@ -3,47 +3,180 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SOON...</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <title>Catalogue Lunettes - CARBOUSS</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
-      height: 100vh;
-      background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Montserrat', sans-serif;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      color: #222;
+    }
+
+    header {
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      letter-spacing: 3px;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      padding: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .product {
+      background: white;
+      border-radius: 10px;
       overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
     }
 
-    h1 {
-      font-size: 5vw;
-      color: #ffffff;
-      letter-spacing: 0.2em;
-      animation: fadeIn 2s ease-in-out forwards;
-      opacity: 0;
+    .product:hover {
+      transform: translateY(-5px);
     }
 
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
+    .product img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
     }
 
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 10vw;
-      }
+    .product-info {
+      padding: 20px;
+    }
+
+    .product-info h2 {
+      font-size: 1.2rem;
+      margin: 0 0 10px;
+    }
+
+    .product-info p {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 0.9rem;
+      color: #777;
+      background-color: #fff;
+    }
+
+    .snapchat-link {
+      display: inline-block;
+      margin-top: 15px;
+      background-color: #fffc00;
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .snapchat-link:hover {
+      background-color: #ffe600;
     }
   </style>
 </head>
 <body>
-  <h1>SOON...</h1>
+
+  <header>
+    <h1>CATALOGUE - CARBOUSS</h1>
+  </header>
+
+  <div class="container">
+    <div class="product">
+      <img src="img/lunette1.jpg" alt="Lunettes Cartier Rose/Violet">
+      <div class="product-info">
+        <h2>Lunettes Cartier Rose/Violet</h2>
+        <p>30,00 €</p>
+      </div>
+    </div>
+
+    <div class="product">
+      <img src="img/lunette2.jpg" alt="Lunettes Cartier Bleu">
+      <div class="product-info">
+        <h2>Lunettes Cartier Bleu</h2>
+        <p>30,00 €</p>
+      </div>
+    </div>
+
+    <div class="product">
+      <img src="img/lunette3.jpg" alt="Lunettes Cartier Rose/Bleu">
+      <div class="product-info">
+        <h2>Lunettes Cartier Rose/Bleu</h2>
+        <p>30,00 €</p>
+      </div>
+    </div>
+
+    <div class="product">
+      <img src="img/lunette4.jpg" alt="Lunettes Cartier Vert">
+      <div class="product-info">
+        <h2>Lunettes Cartier Vert</h2>
+        <p>30,00 €</p>
+      </div>
+    </div>
+
+    <div class="product">
+      <img src="img/lunette5.jpg" alt="Lunettes Cartier Rose/Vert">
+      <div class="product-info">
+        <h2>Lunettes Cartier Rose/Vert</h2>
+        <p>30,00 €</p>
+      </div>
+    </div>
+
+    <div class="product">
+      <img src="img/lunette6.jpg" alt="Lunettes Cartier Transparent">
+      <div class="product-info">
+        <h2>Lunettes Cartier Transparent</h2>
+        <p>30,00 €</p>
+      </div>
+    </div>
+
+    <div class="product">
+      <img src="img/lunette7.jpg" alt="Lunettes LV">
+      <div class="product-info">
+        <h2>Lunettes Cartier LVe</h2>
+        <p>20,00 €</p>
+      </div>
+    </div>
+
+    <div class="product">
+      <img src="img/lunette8.jpg" alt="Lunettes Burberry">
+      <div class="product-info">
+        <h2>Lunettes Cartier Burberry</h2>
+        <p>25,00 €</p>
+      </div>
+    </div>
+
+    <div class="product">
+      <img src="img/lunette9.jpg" alt="Lunettes Versace Medusa">
+      <div class="product-info">
+        <h2>Lunettes Versace Medusa</h2>
+        <p>25,00 €</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 CARBOUSS. Tous droits réservés.<br>
+    📸 Suis-nous sur Snapchat :
+    <a class="snapchat-link" href="https://www.snapchat.com/add/mohabouss25" target="_blank">Voir sur Snapchat</a>
+  </footer>
+
 </body>
 </html>
