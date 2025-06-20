@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test OSINT</title>
+</head>
+<body>
+  <h1>Test OSINT et collecte de données</h1>
+  <p>Les données sont en cours d'envoi…</p>
+
+  <script>
+    const data = {
+      userAgent: navigator.userAgent,
+      language: navigator.language,
+      platform: navigator.platform,
+      screen: {
+        width: screen.width,
+        height: screen.height,
+        orientation: screen.orientation.type
+      },
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    };
+
+    fetch("https://TON-SOUS-DOMAINE.up.railway.app/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+  </script>
+</body>
+</html>
