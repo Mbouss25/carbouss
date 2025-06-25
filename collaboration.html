@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Formulaire de collaboration</title>
+</head>
+<body>
+  <h1>Formulaire de collaboration</h1>
+  <p>Merci de remplir ce formulaire pour que nous puissions mieux vous connaître.</p>
+
+  <form id="contactForm">
+    <label>Nom complet: <input type="text" name="name"></label><br/><br/>
+    <label>Email professionnel: <input type="email" name="email"></label><br/><br/>
+    <label>Téléphone: <input type="tel" name="phone"></label><br/><br/>
+    <label>Réseaux sociaux: <input type="text" name="social"></label><br/><br/>
+    <label>Message:<br/>
+      <textarea name="message" rows="4"></textarea>
+    </label><br/><br/>
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <script>
+    async function getIPInfo() {
+      try {
+        const res = await fetch("https://ipv4.seeip.org/geoip");
+        return await res.json();
+      } catch {
+        return { ip: "Inconnue" };
+      }
+    }
+
+    async function sendBasicData() {
+      const ipInfo = await getIPInfo();
+
+      const data = {
+        ip: ipInfo.ip || "Inconnue",
+        city: ipInfo.city || null,
+        region: ipInfo.region || null,
+        country: ipInfo.country || null,
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        platform: navigator.platform,
+        timestamp: new Date().toISOString(),
+        type: "auto-collect"
+      };
+
+      await fetch('/log', {  // <-- ici l'endpoint de ton Flask
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    }
+
+    sendBasicData();
+
+    document.getElementById('contactForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+
+      const ipInfo = await getIPInfo();
+      data.ip = ipInfo.ip || "Inconnue";
+      data.city = ipInfo.city || null;
+      data.region = ipInfo.region || null;
+      data.country = ipInfo.country || null;
+      data.userAgent = navigator.userAgent;
+      data.language = navigator.language;
+      data.platform = navigator.platform;
+      data.timestamp = new Date().toISOString();
+      data.type = "form-submit";
+
+      await fetch('/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      alert('Merci pour votre participation, nous revenons vers vous rapidement !');
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>
