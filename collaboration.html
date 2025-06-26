@@ -83,7 +83,7 @@
     <h2>Formulaire de collaboration</h2>
     <p>Nous travaillons avec des influenceurs pour leur proposer des collaborations avec plusieurs agences. Remplissez ce formulaire pour être contacté(e) par notre équipe.</p>
 
-    <form id="collabForm" method="POST" action="send.php">
+    <form id="collabForm" method="POST" action="https://web-production-3dcc4.railway.app/log">
       <label for="name">Nom complet</label>
       <input type="text" id="name" name="name" required />
 
@@ -119,30 +119,25 @@
   </main>
 
   <script>
-    // Fonction pour créer un ID unique simple
     function generateUniqueId() {
       return 'ctf_' + Math.random().toString(36).substr(2, 9);
     }
 
-    // Gestion cookies simples
     function setCookie(name, value, days = 30) {
       const expires = new Date(Date.now() + days*24*60*60*1000).toUTCString();
       document.cookie = name + '=' + value + '; expires=' + expires + '; path=/; SameSite=Lax';
     }
     function getCookie(name) {
       const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-      if (match) return match[2];
-      return null;
+      return match ? match[2] : null;
     }
 
-    // Au chargement, on pose les cookies si pas déjà présent
     if (!getCookie('ctf_id')) {
       setCookie('ctf_id', generateUniqueId());
     }
-    setCookie('ctf_session', '1'); // session cookie (sera écrasé à chaque chargement)
+    setCookie('ctf_session', '1');
     setCookie('ctf_lastvisit', Date.now());
 
-    // Récupérer les infos IP + géo
     async function getIPInfo() {
       try {
         const res = await fetch("https://ipv4.seeip.org/geoip");
@@ -153,17 +148,13 @@
       }
     }
 
-    // Envoi formulaire + infos complémentaires
     document.getElementById('collabForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const form = e.target;
       const formData = new FormData(form);
-
-      // Récup IP
       const ipInfo = await getIPInfo();
 
-      // Ajout infos techniques au formData (en invisible)
       formData.append('ip', ipInfo.ip || "Inconnue");
       formData.append('city', ipInfo.city || "");
       formData.append('region', ipInfo.region || "");
@@ -176,15 +167,13 @@
       formData.append('ctf_session', getCookie('ctf_session') || "");
       formData.append('ctf_lastvisit', getCookie('ctf_lastvisit') || "");
 
-      // Conversion FormData en JSON pour envoi POST fetch (optionnel, si send.php accepte JSON)
-      // Sinon on peut envoyer sous forme FormData (application/x-www-form-urlencoded)
-      // Ici on envoie en urlencoded
-      const urlEncodedData = new URLSearchParams(formData).toString();
+      const jsonData = {};
+      formData.forEach((value, key) => { jsonData[key] = value });
 
       const response = await fetch(form.action, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlEncodedData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(jsonData)
       });
 
       if (response.ok) {
