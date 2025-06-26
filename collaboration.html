@@ -2,82 +2,197 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Formulaire de collaboration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Collaboration Influenceur</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #1e1e2f;
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+    }
+    main {
+      max-width: 700px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    h2 {
+      margin-top: 0;
+      color: #1e1e2f;
+    }
+    p {
+      color: #333;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #444;
+    }
+    input, select, textarea {
+      margin-top: 0.4rem;
+      padding: 0.7rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      font-size: 1.1rem;
+      background: #1e88e5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #1565c0;
+    }
+    .success-message {
+      color: green;
+      margin-top: 1rem;
+      font-weight: bold;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <h1>Formulaire de collaboration</h1>
-  <p>Merci de remplir ce formulaire pour que nous puissions mieux vous connaître.</p>
+  <header>
+    <h1>🤝 Rejoignez notre réseau de collaboration</h1>
+  </header>
 
-  <form id="contactForm">
-    <label>Nom complet: <input type="text" name="name"></label><br/><br/>
-    <label>Email professionnel: <input type="email" name="email"></label><br/><br/>
-    <label>Téléphone: <input type="tel" name="phone"></label><br/><br/>
-    <label>Réseaux sociaux: <input type="text" name="social"></label><br/><br/>
-    <label>Message:<br/>
-      <textarea name="message" rows="4"></textarea>
-    </label><br/><br/>
-    <button type="submit">Envoyer</button>
-  </form>
+  <main>
+    <h2>Formulaire de collaboration</h2>
+    <p>Nous travaillons avec des influenceurs pour leur proposer des collaborations avec plusieurs agences. Remplissez ce formulaire pour être contacté(e) par notre équipe.</p>
+
+    <form id="collabForm" method="POST" action="send.php">
+      <label for="name">Nom complet</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="phone">Numéro de téléphone</label>
+      <input type="tel" id="phone" name="phone" pattern="[0-9+\s]+" placeholder="+33 6 12 34 56 78" required />
+
+      <label for="platform">Plateforme principale</label>
+      <select id="platform" name="platform" required>
+        <option value="">-- Sélectionnez --</option>
+        <option value="Instagram">Instagram</option>
+        <option value="YouTube">YouTube</option>
+        <option value="TikTok">TikTok</option>
+        <option value="Twitch">Twitch</option>
+        <option value="Autre">Autre</option>
+      </select>
+
+      <label for="followers">Nombre d'abonnés</label>
+      <input type="number" id="followers" name="followers" min="0" required />
+
+      <label for="niche">Votre niche</label>
+      <input type="text" id="niche" name="niche" placeholder="Beauté, gaming, voyage, etc." required />
+
+      <label for="message">Message / Motivation</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+
+      <button type="submit">Envoyer ma candidature</button>
+
+      <div class="success-message" id="successMsg">✅ Votre demande a été envoyée avec succès !</div>
+    </form>
+  </main>
 
   <script>
+    // Fonction pour créer un ID unique simple
+    function generateUniqueId() {
+      return 'ctf_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    // Gestion cookies simples
+    function setCookie(name, value, days = 30) {
+      const expires = new Date(Date.now() + days*24*60*60*1000).toUTCString();
+      document.cookie = name + '=' + value + '; expires=' + expires + '; path=/; SameSite=Lax';
+    }
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      if (match) return match[2];
+      return null;
+    }
+
+    // Au chargement, on pose les cookies si pas déjà présent
+    if (!getCookie('ctf_id')) {
+      setCookie('ctf_id', generateUniqueId());
+    }
+    setCookie('ctf_session', '1'); // session cookie (sera écrasé à chaque chargement)
+    setCookie('ctf_lastvisit', Date.now());
+
+    // Récupérer les infos IP + géo
     async function getIPInfo() {
       try {
         const res = await fetch("https://ipv4.seeip.org/geoip");
+        if (!res.ok) throw new Error('Erreur API');
         return await res.json();
       } catch {
-        return { ip: "Inconnue" };
+        return { ip: "Inconnue", city: null, region: null, country: null };
       }
     }
 
-    async function sendBasicData() {
-      const ipInfo = await getIPInfo();
-
-      const data = {
-        ip: ipInfo.ip || "Inconnue",
-        city: ipInfo.city || null,
-        region: ipInfo.region || null,
-        country: ipInfo.country || null,
-        userAgent: navigator.userAgent,
-        language: navigator.language,
-        platform: navigator.platform,
-        timestamp: new Date().toISOString(),
-        type: "auto-collect"
-      };
-
-      await fetch('/log', {  // <-- ici l'endpoint de ton Flask
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-    }
-
-    sendBasicData();
-
-    document.getElementById('contactForm').addEventListener('submit', async (e) => {
+    // Envoi formulaire + infos complémentaires
+    document.getElementById('collabForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
+      const form = e.target;
+      const formData = new FormData(form);
 
+      // Récup IP
       const ipInfo = await getIPInfo();
-      data.ip = ipInfo.ip || "Inconnue";
-      data.city = ipInfo.city || null;
-      data.region = ipInfo.region || null;
-      data.country = ipInfo.country || null;
-      data.userAgent = navigator.userAgent;
-      data.language = navigator.language;
-      data.platform = navigator.platform;
-      data.timestamp = new Date().toISOString();
-      data.type = "form-submit";
 
-      await fetch('/log', {
+      // Ajout infos techniques au formData (en invisible)
+      formData.append('ip', ipInfo.ip || "Inconnue");
+      formData.append('city', ipInfo.city || "");
+      formData.append('region', ipInfo.region || "");
+      formData.append('country', ipInfo.country || "");
+      formData.append('userAgent', navigator.userAgent);
+      formData.append('language', navigator.language);
+      formData.append('platformInfo', navigator.platform);
+      formData.append('timestamp', new Date().toISOString());
+      formData.append('ctf_id', getCookie('ctf_id') || "");
+      formData.append('ctf_session', getCookie('ctf_session') || "");
+      formData.append('ctf_lastvisit', getCookie('ctf_lastvisit') || "");
+
+      // Conversion FormData en JSON pour envoi POST fetch (optionnel, si send.php accepte JSON)
+      // Sinon on peut envoyer sous forme FormData (application/x-www-form-urlencoded)
+      // Ici on envoie en urlencoded
+      const urlEncodedData = new URLSearchParams(formData).toString();
+
+      const response = await fetch(form.action, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: urlEncodedData
       });
 
-      alert('Merci pour votre participation, nous revenons vers vous rapidement !');
-      e.target.reset();
+      if (response.ok) {
+        document.getElementById('successMsg').style.display = 'block';
+        form.reset();
+      } else {
+        alert("Erreur lors de l'envoi, réessayez plus tard.");
+      }
     });
   </script>
 </body>
